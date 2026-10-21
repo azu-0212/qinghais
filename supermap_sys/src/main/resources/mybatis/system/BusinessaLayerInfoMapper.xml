@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.BusinessaLayerInfoMapper">
+
+    <resultMap type="BusinessaLayerInfo" id="BusinessaLayerInfoResult">
+        <result property="id"    column="id"    />
+        <result property="divisionId"    column="division_id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="roll"    column="roll"    />
+        <result property="pitch"    column="pitch"    />
+        <result property="heading"    column="heading"    />
+        <result property="postion"    column="postion"    />
+        <result property="url"    column="url"    />
+        <result property="dataYear"    column="data_year"    />
+        <result property="dataVolume"    column="data_volume"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="divisionName"    column="divisionName"    />
+        <result property="num"    column="num"    />
+        <result property="total"    column="total"    />
+    </resultMap>
+
+
+    <sql id="selectBusinessaLayerInfoVo">
+        select
+         bi.id, bi.division_id, bi.name, bi.type, bi.roll, bi.pitch, bi.heading, bi.postion, bi.url, bi.data_year, bi.data_volume, bi.update_time, bi.create_time, bi.del_flag,
+         bda.name as 'divisionName'
+         from businessa_layer_info bi
+         LEFT JOIN businessa_dministrative_division bda
+         on (bi.division_id = bda.id)
+    </sql>
+
+    <select id="selectBusinessaLayerInfoList" parameterType="BusinessaLayerInfo" resultMap="BusinessaLayerInfoResult">
+        <include refid="selectBusinessaLayerInfoVo"/>
+        <where>
+            <if test="divisionId != null "> and bi.division_id = #{divisionId}</if>
+            <if test="name != null  and name != ''"> and bi.name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and bi.type = #{type}</if>
+            <if test="roll != null  and roll != ''"> and bi.roll = #{roll}</if>
+            <if test="pitch != null  and pitch != ''"> and bi.pitch = #{pitch}</if>
+            <if test="heading != null  and heading != ''"> and bi.heading = #{heading}</if>
+            <if test="postion != null  and postion != ''"> and bi.postion = #{postion}</if>
+            <if test="url != null  and url != ''"> and bi.url = #{url}</if>
+            <if test="dataYear != null  and dataYear != ''"> and bi.data_year = #{dataYear}</if>
+            <if test="dataVolume != null  and dataVolume != ''"> and bi.data_volume = #{dataVolume}</if>
+        </where>
+    </select>
+
+    <select id="selectBusinessaLayerInfoById" parameterType="Long" resultMap="BusinessaLayerInfoResult">
+        <include refid="selectBusinessaLayerInfoVo"/>
+        where bi.id = #{id}
+    </select>
+
+    <insert id="insertBusinessaLayerInfo" parameterType="BusinessaLayerInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into businessa_layer_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="divisionId != null">division_id,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="roll != null">roll,</if>
+            <if test="pitch != null">pitch,</if>
+            <if test="heading != null">heading,</if>
+            <if test="postion != null">postion,</if>
+            <if test="url != null">url,</if>
+            <if test="dataYear != null">data_year,</if>
+            <if test="dataVolume != null">data_volume,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="divisionId != null">#{divisionId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="roll != null">#{roll},</if>
+            <if test="pitch != null">#{pitch},</if>
+            <if test="heading != null">#{heading},</if>
+            <if test="postion != null">#{postion},</if>
+            <if test="url != null">#{url},</if>
+            <if test="dataYear != null">#{dataYear},</if>
+            <if test="dataVolume != null">#{dataVolume},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusinessaLayerInfo" parameterType="BusinessaLayerInfo">
+        update businessa_layer_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="divisionId != null">division_id = #{divisionId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="roll != null">roll = #{roll},</if>
+            <if test="pitch != null">pitch = #{pitch},</if>
+            <if test="heading != null">heading = #{heading},</if>
+            <if test="postion != null">postion = #{postion},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="dataYear != null">data_year = #{dataYear},</if>
+            <if test="dataVolume != null">data_volume = #{dataVolume},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusinessaLayerInfoById" parameterType="Long">
+        delete from businessa_layer_info where id = #{id}
+    </delete>
+
+    <delete id="deleteBusinessaLayerInfoByIds" parameterType="String">
+        delete from businessa_layer_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="countInfo" resultType="BusinessaLayerInfo">
+        select COUNT(id) as 'num',SUM(data_volume) as 'total',type FROM businessa_layer_info group by type
+    </select>
+
+</mapper>

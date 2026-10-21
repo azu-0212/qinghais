@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.BusinessaDministrativeDivisionMapper">
+
+    <resultMap type="BusinessaDministrativeDivision" id="BusinessaDministrativeDivisionResultAll">
+        <result property="id"    column="id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="name"    column="name"    />
+        <result property="code"    column="code"    />
+        <result property="type"    column="type"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap type="BusinessaDministrativeDivision" id="BusinessaDministrativeDivisionResult">
+        <result property="id"    column="id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="name"    column="children_name"    />
+        <result property="code"    column="code"    />
+        <result property="type"    column="type"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+
+    <resultMap type="BusinessaDministrativeDivision" id="BusinessaDministrativeDivisionSearchResult" extends="BusinessaDministrativeDivisionResult">
+        <collection property="parentName" javaType="com.ruoyi.project.system.domain.BusinessaDministrativeDivision" resultMap="BusinessaDministrativeDivisionParentResult"></collection>
+    </resultMap>
+
+    <resultMap type="BusinessaDministrativeDivision" id="BusinessaDministrativeDivisionParentResult">
+        <result property="name"    column="parent_name"    />
+    </resultMap>
+
+    <sql id="selectBusinessaDministrativeDivisionVo">
+        select id, parent_id, ancestors, name, code, type, order_num, del_flag, create_time, remark from businessa_dministrative_division
+    </sql>
+
+    <select id="selectBusinessaDministrativeDivisionList" parameterType="BusinessaDministrativeDivision" resultMap="BusinessaDministrativeDivisionResultAll">
+        <include refid="selectBusinessaDministrativeDivisionVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="ancestors != null  and ancestors != ''"> and ancestors = #{ancestors}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+        </where>
+    </select>
+
+    <select id="selectBusinessaDministrativeDivisionSearchList" parameterType="BusinessaDministrativeDivision" resultMap="BusinessaDministrativeDivisionSearchResult">
+        select bu.id,bu.name as 'children_name', bu.code, bu.type, bu.order_num, bd.name as 'parent_name' from businessa_dministrative_division bu
+        LEFT JOIN businessa_dministrative_division bd ON bu.parent_id = bd.id
+        WHERE bu.parent_id > 0 AND bu.type > '1'
+    </select>
+
+    <select id="selectBusinessaDministrativeDivisionById" parameterType="Long" resultMap="BusinessaDministrativeDivisionResult">
+        <include refid="selectBusinessaDministrativeDivisionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBusinessaDministrativeDivision" parameterType="BusinessaDministrativeDivision" useGeneratedKeys="true" keyProperty="id">
+        insert into businessa_dministrative_division
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="ancestors != null">ancestors,</if>
+            <if test="name != null">name,</if>
+            <if test="code != null">code,</if>
+            <if test="type != null">type,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="ancestors != null">#{ancestors},</if>
+            <if test="name != null">#{name},</if>
+            <if test="code != null">#{code},</if>
+            <if test="type != null">#{type},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusinessaDministrativeDivision" parameterType="BusinessaDministrativeDivision">
+        update businessa_dministrative_division
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="ancestors != null">ancestors = #{ancestors},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusinessaDministrativeDivisionById" parameterType="Long">
+        delete from businessa_dministrative_division where id = #{id}
+    </delete>
+
+    <delete id="deleteBusinessaDministrativeDivisionByIds" parameterType="String">
+        delete from businessa_dministrative_division where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getDivitionByPid" parameterType="Long" resultType="BusinessaDministrativeDivision">
+        <include refid="selectBusinessaDministrativeDivisionVo"></include>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+        </where>
+
+    </select>
+
+</mapper>

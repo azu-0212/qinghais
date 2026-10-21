@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysSourceTypeMapper">
+
+	<resultMap type="SysSourceType" id="SysSourceTypeResult">
+		<result property="id"    column="id"    />
+		<result property="parentId"    column="parent_id"    />
+		<result property="resourceId"    column="resource_id"    />
+		<result property="nodeName"    column="node_name"    />
+		<result property="nodeStatus"    column="node_status"    />
+		<result property="createDate"    column="create_date"    />
+		<result property="updateDate"    column="update_date"    />
+		<result property="updateBy"    column="update_by"    />
+		<result property="remark"    column="remark"    />
+		<result property="nodeType"    column="node_type"    />
+	</resultMap>
+
+	<resultMap id="SysSourceAllResult" type="SysSourceType" extends="SysSourceTypeResult">
+		<collection property="resource" javaType="com.ruoyi.project.system.domain.SysResource" resultMap="SysResourceResult"></collection>
+	</resultMap>
+
+	<resultMap type="SysResource" id="SysResourceResult">
+		<result property="resourceId"    column="pid"/>
+		<result property="nodeName"    column="name" />
+		<result property="nodeType"    column="node_type"/>
+		<result property="dataType"    column="data_type"/>
+		<result property="serverUrl"    column="server_url"/>
+	</resultMap>
+
+	<sql id="selectSysSourceTypeVo">
+        select id, parent_id, resource_id, node_name, node_status, create_date, update_date, update_by, remark, node_type from sys_source_type
+    </sql>
+
+	<select id="selectSysSourceTypeListAll" resultMap="SysSourceAllResult">
+		select st.id, st.resource_id, st.parent_id, st.node_name, sr.resource_id as 'pid', sr.node_name as 'name', sr.data_type, sr.node_type, sr.server_url
+		from sys_source_type st LEFT JOIN sys_resource sr ON st.resource_id = sr.resource_id
+	</select>
+
+	<select id="selectSysSourceTypeList" parameterType="SysSourceType" resultMap="SysSourceTypeResult">
+		<include refid="selectSysSourceTypeVo"/>
+		<where>
+			<if test="parentId != null "> and parent_id = #{parentId}</if>
+			<if test="resourceId != null "> and resource_id = #{resourceId}</if>
+			<if test="nodeName != null  and nodeName != ''"> and node_name like concat('%', #{nodeName}, '%')</if>
+			<if test="nodeStatus != null "> and node_status = #{nodeStatus}</if>
+			<if test="createDate != null "> and create_date = #{createDate}</if>
+			<if test="updateDate != null "> and update_date = #{updateDate}</if>
+			<if test="nodeType != null "> and node_type = #{nodeType}</if>
+		</where>
+	</select>
+
+	<select id="selectSysSourceTypeById" parameterType="Long" resultMap="SysSourceTypeResult">
+		<include refid="selectSysSourceTypeVo"/>
+		where id = #{id}
+	</select>
+
+	<insert id="insertSysSourceType" parameterType="SysSourceType" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_source_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">parent_id,</if>
+			<if test="resourceId != null">resource_id,</if>
+			<if test="nodeName != null">node_name,</if>
+			<if test="nodeStatus != null">node_status,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="updateDate != null">update_date,</if>
+			<if test="updateBy != null">update_by,</if>
+			<if test="remark != null">remark,</if>
+			<if test="nodeType != null">node_type,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="parentId != null">#{parentId},</if>
+			<if test="resourceId != null">#{resourceId},</if>
+			<if test="nodeName != null">#{nodeName},</if>
+			<if test="nodeStatus != null">#{nodeStatus},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="updateDate != null">#{updateDate},</if>
+			<if test="updateBy != null">#{updateBy},</if>
+			<if test="remark != null">#{remark},</if>
+			<if test="nodeType != null">#{nodeType},</if>
+		</trim>
+	</insert>
+
+	<update id="updateSysSourceType" parameterType="SysSourceType">
+		update sys_source_type
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="parentId != null">parent_id = #{parentId},</if>
+			<if test="resourceId != null">resource_id = #{resourceId},</if>
+			<if test="nodeName != null">node_name = #{nodeName},</if>
+			<if test="nodeStatus != null">node_status = #{nodeStatus},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="updateDate != null">update_date = #{updateDate},</if>
+			<if test="updateBy != null">update_by = #{updateBy},</if>
+			<if test="remark != null">remark = #{remark},</if>
+			<if test="nodeType != null">node_type = #{nodeType},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+	<delete id="deleteSysSourceTypeById" parameterType="Long">
+        delete from sys_source_type where id = #{id}
+    </delete>
+
+	<delete id="deleteSysSourceTypeByIds" parameterType="String">
+		delete from sys_source_type where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

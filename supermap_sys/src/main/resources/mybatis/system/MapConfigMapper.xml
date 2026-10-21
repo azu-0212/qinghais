@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.MapConfigMapper">
+    
+    <resultMap type="MapConfig" id="MapConfigResult">
+        <result property="configId"    column="config_id"    />
+        <result property="configName"    column="config_name"    />
+        <result property="configJson"    column="config_json"    />
+        <result property="configCode"    column="config_code"    />
+        <result property="configRemark"    column="config_remark"    />
+        <result property="configUptime"    column="config_upTime"    />
+    </resultMap>
+
+    <sql id="selectMapConfigVo">
+        select config_id, config_name, config_json, config_code, config_remark, config_upTime from map_config
+    </sql>
+
+    <select id="selectMapConfigList" parameterType="MapConfig" resultMap="MapConfigResult">
+        <include refid="selectMapConfigVo"/>
+        <where>  
+            <if test="configName != null  and configName != ''"> and config_name like concat('%', #{configName}, '%')</if>
+            <if test="configJson != null  and configJson != ''"> and config_json = #{configJson}</if>
+            <if test="configCode != null  and configCode != ''"> and config_code = #{configCode}</if>
+            <if test="configRemark != null  and configRemark != ''"> and config_remark = #{configRemark}</if>
+            <if test="configUptime != null "> and config_upTime = #{configUptime}</if>
+        </where>
+    </select>
+    
+    <select id="selectMapConfigById" parameterType="Long" resultMap="MapConfigResult">
+        <include refid="selectMapConfigVo"/>
+        where config_id = #{configId}
+    </select>
+        
+    <insert id="insertMapConfig" parameterType="MapConfig" useGeneratedKeys="true" keyProperty="configId">
+        insert into map_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="configName != null and configName != ''">config_name,</if>
+            <if test="configJson != null and configJson != ''">config_json,</if>
+            <if test="configCode != null">config_code,</if>
+            <if test="configRemark != null">config_remark,</if>
+            <if test="configUptime != null">config_upTime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="configName != null and configName != ''">#{configName},</if>
+            <if test="configJson != null and configJson != ''">#{configJson},</if>
+            <if test="configCode != null">#{configCode},</if>
+            <if test="configRemark != null">#{configRemark},</if>
+            <if test="configUptime != null">#{configUptime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMapConfig" parameterType="MapConfig">
+        update map_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="configName != null and configName != ''">config_name = #{configName},</if>
+            <if test="configJson != null and configJson != ''">config_json = #{configJson},</if>
+            <if test="configCode != null">config_code = #{configCode},</if>
+            <if test="configRemark != null">config_remark = #{configRemark},</if>
+            <if test="configUptime != null">config_upTime = #{configUptime},</if>
+        </trim>
+        where config_id = #{configId}
+    </update>
+
+    <delete id="deleteMapConfigById" parameterType="Long">
+        delete from map_config where config_id = #{configId}
+    </delete>
+
+    <delete id="deleteMapConfigByIds" parameterType="String">
+        delete from map_config where config_id in 
+        <foreach item="configId" collection="array" open="(" separator="," close=")">
+            #{configId}
+        </foreach>
+    </delete>
+    
+</mapper>

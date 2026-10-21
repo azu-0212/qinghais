@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.BusinessaFlyMapper">
+
+    <resultMap type="BusinessaFly" id="BusinessaFlyResult">
+        <result property="id"    column="id"    />
+        <result property="resourceId"    column="resource_id"    />
+        <result property="flyPath"    column="fly_path"    />
+        <result property="flyName"    column="fly_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="imgPath"    column="img_path"         />
+    </resultMap>
+
+    <resultMap type="SysResource" id="ConfigResult">
+        <result property="resourceId"    column="resource_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="serverUrl"    column="server_url"    />
+        <result property="orderBy"    column="order_by"    />
+        <result property="nodeStatus"    column="node_status"    />
+        <result property="legend"    column="legend"    />
+        <result property="layerSearch"    column="layer_search"    />
+        <result property="queryPara"    column="query_para"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="childNames"    column="child_names"    />
+        <result property="dataYear"    column="data_year"    />
+        <result property="dataVolume"    column="data_volume"    />
+        <result property="dataParam"    column="data_param"    />
+        <result property="position"    column="position"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="bindArea"    column="bind_area"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="BusinessaFlyConfigResult" type="BusinessaFly" extends="BusinessaFlyResult">
+        <association property="sysResource"  column="resource_id" javaType="com.ruoyi.project.system.domain.SysResource" resultMap="ConfigResult"/>
+    </resultMap>
+
+    <sql id="selectBusinessaFlyVo">
+        select id, resource_id, fly_path, fly_name, create_time, update_time, del_flag,img_path from businessa_fly
+    </sql>
+
+    <select id="selectBusinessaFlyList" parameterType="BusinessaFly" resultMap="BusinessaFlyConfigResult">
+        select bf.*, sr.resource_id, node_name, server_url
+        from businessa_fly bf
+        Left JOIN sys_resource sr on sr.resource_id = bf.resource_id
+        <where>
+            <if test="flyPath != null  and flyPath != ''"> and fly_path = #{flyPath}</if>
+            <if test="flyName != null  and flyName != ''"> and fly_name like concat('%', #{flyName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectBusinessaFlyById" parameterType="Long" resultMap="BusinessaFlyResult">
+        <include refid="selectBusinessaFlyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBusinessaFly" parameterType="BusinessaFly">
+        insert into businessa_fly
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="resourceId != null">resource_id,</if>
+            <if test="flyPath != null">fly_path,</if>
+            <if test="imgPath != null">img_path,</if>
+            <if test="flyName != null">fly_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="resourceId != null">#{resourceId},</if>
+            <if test="flyPath != null">#{flyPath},</if>
+            <if test="imgPath != null">#{imgPath},</if>
+            <if test="flyName != null">#{flyName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusinessaFly" parameterType="BusinessaFly">
+        update businessa_fly
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+            <if test="flyPath != null">fly_path = #{flyPath},</if>
+            <if test="imgPath != null">img_path = #{imgPath},</if>
+            <if test="flyName != null">fly_name = #{flyName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusinessaFlyById" parameterType="Long">
+        delete from businessa_fly where id = #{id}
+    </delete>
+
+    <delete id="deleteBusinessaFlyByIds" parameterType="String">
+        delete from businessa_fly where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

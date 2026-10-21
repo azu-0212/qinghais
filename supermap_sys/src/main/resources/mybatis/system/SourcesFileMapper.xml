@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SourcesFileMapper">
+    
+    <resultMap type="SourcesFile" id="SourcesFileResult">
+        <result property="fileId"    column="file_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+    </resultMap>
+
+    <sql id="selectSourcesFileVo">
+        select file_id, file_name, file_path from sources_file
+    </sql>
+
+    <select id="selectSourcesFileList" parameterType="SourcesFile" resultMap="SourcesFileResult">
+        <include refid="selectSourcesFileVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+        </where>
+    </select>
+    
+    <select id="selectSourcesFileById" parameterType="Long" resultMap="SourcesFileResult">
+        <include refid="selectSourcesFileVo"/>
+        where file_id = #{fileId}
+    </select>
+        
+    <insert id="insertSourcesFile" parameterType="SourcesFile" useGeneratedKeys="true" keyProperty="fileId">
+        insert into sources_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">file_name,</if>
+            <if test="filePath != null">file_path,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">#{fileName},</if>
+            <if test="filePath != null">#{filePath},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSourcesFile" parameterType="SourcesFile">
+        update sources_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deleteSourcesFileById" parameterType="Long">
+        delete from sources_file where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteSourcesFileByIds" parameterType="String">
+        delete from sources_file where file_id in 
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+    
+</mapper>

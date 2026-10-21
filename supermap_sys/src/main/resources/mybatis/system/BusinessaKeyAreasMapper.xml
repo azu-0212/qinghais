@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.BusinessaKeyAreasMapper">
+
+    <resultMap type="BusinessaKeyAreas" id="BusinessaKeyAreasResult">
+        <result property="id"    column="id"    />
+        <result property="resourceId"    column="resource_id"    />
+        <result property="imgPath"    column="img_path"    />
+        <result property="imgName"    column="img_name"    />
+        <result property="position"    column="position"    />
+        <result property="serverUrl"    column="server_url"    />
+        <result property="description"    column="description"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="videoId"    column="video_id"    />
+    </resultMap>
+
+    <sql id="selectBusinessaKeyAreasVo">
+        select id, resource_id,video_id, img_path, img_name, position,server_url, description, create_time, update_time, del_flag from businessa_key_areas
+    </sql>
+
+    <select id="selectBusinessaKeyAreasList" parameterType="BusinessaKeyAreas" resultMap="BusinessaKeyAreasResult">
+        <include refid="selectBusinessaKeyAreasVo"/>
+        <where>
+            <if test="imgPath != null  and imgPath != ''"> and img_path = #{imgPath}</if>
+            <if test="imgName != null  and imgName != ''"> and img_name like concat('%', #{imgName}, '%')</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="serverUrl != null  and serverUrl != ''"> and server_url = #{serverUrl}</if>
+        </where>
+    </select>
+
+    <select id="selectBusinessaKeyAreasById" parameterType="Long" resultMap="BusinessaKeyAreasResult">
+        <include refid="selectBusinessaKeyAreasVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBusinessaKeyAreas" parameterType="BusinessaKeyAreas" useGeneratedKeys="true" keyProperty="id">
+        insert into businessa_key_areas
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resourceId != null">resource_id,</if>
+            <if test="videoId != null">video_id,</if>
+            <if test="imgPath != null">img_path,</if>
+            <if test="imgName != null">img_name,</if>
+            <if test="position != null">position,</if>
+            <if test="serverUrl != null">server_url,</if>
+            <if test="description != null">description,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resourceId != null">#{resourceId},</if>
+            <if test="videoId != null">#{videoId},</if>
+            <if test="imgPath != null">#{imgPath},</if>
+            <if test="imgName != null">#{imgName},</if>
+            <if test="position != null">#{position},</if>
+            <if test="serverUrl != null">#{serverUrl},</if>
+            <if test="description != null">#{description},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusinessaKeyAreas" parameterType="BusinessaKeyAreas">
+        update businessa_key_areas
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+            <if test="videoId != null">video_id = #{videoId},</if>
+            <if test="imgPath != null">img_path = #{imgPath},</if>
+            <if test="imgName != null">img_name = #{imgName},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="serverUrl != null">server_url = #{serverUrl},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusinessaKeyAreasById" parameterType="Long">
+        delete from businessa_key_areas where id = #{id}
+    </delete>
+
+    <delete id="deleteBusinessaKeyAreasByIds" parameterType="String">
+        delete from businessa_key_areas where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ImgMapper">
+
+    <resultMap type="SysImgCode" id="SourcesCodeResult">
+        <result property="id"    column="id"    />
+        <result property="codeId"    column="code_id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectImgCodeVo">
+        select id, code_id, name from sys_img_code
+    </sql>
+
+    <select id="selectPictureAddress" parameterType="SysImgCode" resultMap="SourcesCodeResult">
+        select * from sys_img_code
+        <!--<include refid="selectImgCodeVo"/>
+        <where>
+            <if test="codeId != null  and codeId != ''"> and code_id = #{codeId}</if>
+        </where>-->
+    </select>
+
+</mapper>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysResourceMapper">
+
+    <resultMap type="SysResource" id="SysResourceResult">
+        <result property="resourceId"    column="resource_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="serverUrl"    column="server_url"    />
+        <result property="dataServerUrl"    column="data_server_url" />
+        <result property="orderBy"    column="order_by"    />
+        <result property="nodeStatus"    column="node_status"    />
+        <result property="legend"    column="legend"    />
+        <result property="layerSearch"    column="layer_search"    />
+        <result property="queryPara"    column="query_para"    />
+        <result property="parentCode"    column="parent_code"    />
+        <result property="childNames"    column="child_names"    />
+        <result property="dataYear"    column="data_year"    />
+        <result property="dataVolume"    column="data_volume"    />
+        <result property="dataParam"    column="data_param"    />
+        <result property="dataSource"    column="data_source"    />
+        <result property="dataSet"    column="data_set"    />
+        <result property="position"    column="position"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="bindArea"    column="bind_area"    />
+        <result property="dataRegion"    column="data_region"    />
+        <result property="remark"    column="remark" />
+    </resultMap>
+
+    <resultMap id="SysResourceGroupResult" type="SysGroup">
+        <result property="dataRegion"    column="data_region"    />
+        <result property="dictLabel"    column="dict_label"    />
+        <result property="nodeStatus"    column="node_status"    />
+        <result property="num"    column="num"    />
+    </resultMap>
+
+    <resultMap type="String" id="SysResourceYearResult">
+        <result property="dataYear"    column="data_year"    />
+    </resultMap>
+
+    <resultMap type="SysImgCode" id="SourcesCodeResult">
+        <result property="id"    column="id"    />
+        <result property="codeId"    column="code_id"    />
+        <result property="name"    column="name"    />
+    </resultMap>
+
+    <sql id="selectImgCodeVo">
+        select id, code_id, name from sys_img_code
+    </sql>
+    <select id="selectPictureAddress" parameterType="SysImgCode" resultMap="SourcesCodeResult">
+        select id, code_id, name from sys_img_code where code_id = #{codeId}
+    </select>
+
+    <!-- 前端列表 -->
+    <sql id="selectSysResourceVo">
+        select resource_id, parent_id, node_name, node_type, data_type, server_url, data_server_url, order_by, node_status, legend, layer_search, query_para, child_names, data_year, data_volume, data_source, data_set, data_param, position,parent_code, create_date, update_date, update_by, bind_area, data_region,height, remark from sys_resource where node_status > 1
+    </sql>
+
+    <!--前端分权限展示列表-->
+    <select id="selectSysRoleResourceList" parameterType="String" resultMap="SysResourceResult">
+        select * from sys_resource where authority_role_id like concat('%', #{role}, '%') and node_status > 1
+    </select>
+
+    <!--管理系统列表-->
+    <select id="selectSysResourceList" parameterType="SysResource" resultMap="SysResourceResult">
+        select * from sys_resource where node_status > 0 ORDER BY order_by ASC
+    </select>
+
+    <select id="selectSysResourceListByTree" resultMap="SysResourceResult">
+        <include refid="selectSysResourceVo"/> ORDER BY order_by ASC
+    </select>
+
+    <select id="selectSysResourceListByLeaf" resultMap="SysResourceResult">
+        <include refid="selectSysResourceVo"/>
+        and node_type > 0
+    </select>
+
+
+   <!-- <select id="selectSysResourceList" parameterType="SysResource" resultMap="SysResourceResult">
+        <include refid="selectSysResourceVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="nodeName != null  and nodeName != ''"> and node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="nodeType != null "> and node_type = #{nodeType}</if>
+            <if test="dataType != null "> and data_type = #{dataType}</if>
+            <if test="serverUrl != null  and serverUrl != ''"> and server_url = #{serverUrl}</if>
+            <if test="orderBy != null "> and order_by = #{orderBy}</if>
+            <if test="nodeStatus != null "> and node_status = #{nodeStatus}</if>
+            <if test="legend != null  and legend != ''"> and legend = #{legend}</if>
+            <if test="layerSearch != null "> and layer_search = #{layerSearch}</if>
+            <if test="queryPara != null  and queryPara != ''"> and query_para = #{queryPara}</if>
+            <if test="childNames != null  and childNames != ''"> and child_names = #{childNames}</if>
+            <if test="dataYear != null  and dataYear != ''"> and data_year = #{dataYear}</if>
+            <if test="dataVolume != null  and dataVolume != ''"> and data_volume = #{dataVolume}</if>
+            <if test="dataParam != null  and dataParam != ''"> and data_param = #{dataParam}</if>
+            <if test="position != null "> and position = #{position}</if>
+            <if test="parentCode != null "> and parent_code = #{parentCode}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+            <if test="bindArea != null "> and bind_area = #{bindArea}</if>
+        </where>
+    </select>-->
+
+    <!-- <select id="selectSysResourceByDataType" parameterType="Long" resultMap="SysResourceResult">
+         <include refid="selectSysResourceVo"/>
+         AND parent_code = #{typeCode} OR parent_id = (SELECT resource_id FROM sys_resource WHERE parent_code = #{typeCode})
+         /*AND parent_code = #{typeCode} or  parent_id = (select resource_id from sys_resource where parent_code = #{typeCode}) or
+         parent_id in (select resource_id from sys_resource where parent_id = (select resource_id from sys_resource where parent_code = #{typeCode}))*/
+     </select>-->
+
+    <select id="selectSysResourceByDataType" parameterType="Long" resultMap="SysResourceResult">
+        <include refid="selectSysResourceVo"/>
+        AND parent_code = #{typeCode} OR parent_id = (SELECT resource_id FROM sys_resource WHERE parent_code = #{typeCode}) AND node_status > 1 ORDER BY order_by DESC
+    </select>
+
+    <!-- 三级树结构查询 -->
+    <select id="selectSysResourceByDataTypeTree" parameterType="Long" resultMap="SysResourceResult">
+       select resource_id, parent_id, node_name, node_type, data_type, data_server_url, server_url, order_by, node_status, legend, layer_search,
+query_para, child_names, data_year, data_volume, data_param, position,parent_code, create_date, update_date, update_by, data_source, data_set, bind_area, data_region, remark from sys_resource where node_status > 1
+       AND parent_code = #{typeCode} or
+       parent_id = (select resource_id from sys_resource where parent_code = #{typeCode} and node_status > 1) and node_status > 1 or
+       parent_id in (select resource_id from sys_resource where parent_id = (select resource_id from sys_resource where parent_code = #{typeCode} and node_status > 1) and node_status > 1) and node_status > 1
+   </select>
+
+    <select id="selectSysResourceByType" parameterType="Long" resultMap="SysResourceResult">
+        <include refid="selectSysResourceVo"/>
+        AND data_type = #{dataType}
+    </select>
+
+    <!-- 按区域分组查询 累计个数  街景的图表统计 -->
+    <select id="selectSysResourceRegionByGroup" parameterType="Long" resultMap="SysResourceGroupResult">
+        select region.*,sd.dict_label from(select data_region, COUNT(*) as num from sys_resource where data_type = #{dataType} AND node_status > 1 GROUP BY data_region) region
+        LEFT JOIN sys_dict_data sd ON sd.dict_value = region.data_region where dict_type = 'sys_region_type'
+    </select>
+
+    <!-- 按区域年份分组查询 倾斜摄影的图表统计 -->
+    <select id="selectSysResourceRegionYearByGroup" parameterType="SysResource" resultMap="SysResourceGroupResult">
+        select region.*,sd.dict_label from(select data_region, COUNT(*) as num from sys_resource where data_type = #{dataType} AND data_year = #{dataYear} AND node_status > 1 GROUP BY data_region) region
+        LEFT JOIN sys_dict_data sd ON sd.dict_value = region.data_region where dict_type = 'sys_region_type'
+    </select>
+
+    <!-- 按区域分组查询 累计体量 -->
+    <select id="selectSysResourceStreetByGroup" parameterType="Long" resultMap="SysResourceGroupResult">
+        select region.*,sd.dict_label from(select data_region, sum(data_volume) as num from sys_resource where data_type = #{dataType} AND node_status > 1 GROUP BY data_region) region
+        LEFT JOIN sys_dict_data sd ON sd.dict_value = region.data_region where dict_type = 'sys_region_type'
+    </select>
+
+    <select id="selectSysResourceByDataTypeYear" parameterType="Long" resultMap="SysResourceResult">
+        <include refid="selectSysResourceVo"/>
+        AND data_type = #{dataType} AND data_year = #{year} ORDER BY data_year DESC
+    </select>
+
+    <select id="selectSysResourceByDataYear" parameterType="Long" resultMap="SysResourceYearResult">
+        select DISTINCT data_year from sys_resource where data_type = #{dataType}  ORDER BY data_year DESC
+    </select>
+
+    <select id="selectSysResourceById" parameterType="Long" resultMap="SysResourceResult">
+        select resource_id, parent_id, node_name, node_type, data_type, server_url, data_server_url, order_by, node_status, legend, layer_search, query_para, child_names, data_year, data_volume, data_source, data_set, data_param, position,parent_code, create_date, update_date, update_by, bind_area, data_region,height, remark
+        from sys_resource where resource_id = #{resourceId}
+    </select>
+
+    <insert id="insertSysResource" parameterType="SysResource" useGeneratedKeys="true" keyProperty="resourceId">
+        insert into sys_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="nodeName != null">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="dataType != null">data_type,</if>
+            <if test="serverUrl != null">server_url,</if>
+            <if test="dataServerUrl != null">data_server_url,</if>
+            <if test="orderBy != null">order_by,</if>
+            <if test="nodeStatus != null">node_status,</if>
+            <if test="legend != null">legend,</if>
+            <if test="layerSearch != null">layer_search,</if>
+            <if test="queryPara != null">query_para,</if>
+            <if test="childNames != null and childNames != ''">child_names,</if>
+            <if test="parentCode != null">parent_code,</if>
+            <if test="dataYear != null">data_year,</if>
+            <if test="dataVolume != null">data_volume,</if>
+            <if test="dataParam != null">data_param,</if>
+            <if test="position != null">position,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="dataSource != null">data_source,</if>
+            <if test="dataSet != null">data_set,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="bindArea != null">bind_area,</if>
+            <if test="dataRegion != null">data_region,</if>
+            <if test="height != null">height,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="nodeName != null">#{nodeName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="dataType != null">#{dataType},</if>
+            <if test="serverUrl != null">#{serverUrl},</if>
+            <if test="dataServerUrl != null">#{dataServerUrl},</if>
+            <if test="orderBy != null">#{orderBy},</if>
+            <if test="nodeStatus != null">#{nodeStatus},</if>
+            <if test="legend != null">#{legend},</if>
+            <if test="layerSearch != null">#{layerSearch},</if>
+            <if test="queryPara != null">#{queryPara},</if>
+            <if test="childNames != null and childNames != ''">#{childNames},</if>
+            <if test="dataYear != null">#{dataYear},</if>
+            <if test="parentCode != null">#{parentCode},</if>
+            <if test="dataVolume != null">#{dataVolume},</if>
+            <if test="dataParam != null">#{dataParam},</if>
+            <if test="position != null">#{position},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="dataSource != null">#{dataSource},</if>
+            <if test="dataSet != null">#{dataSet},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="bindArea != null">#{bindArea},</if>
+            <if test="dataRegion != null">#{dataRegion},</if>
+            <if test="height != null">#{height},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysResource" parameterType="SysResource">
+        update sys_resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="nodeName != null">node_name = #{nodeName},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
+            <if test="serverUrl != null">server_url = #{serverUrl},</if>
+            <if test="dataServerUrl != null">data_server_url = #{dataServerUrl},</if>
+            <if test="orderBy != null">order_by = #{orderBy},</if>
+            <if test="nodeStatus != null">node_status = #{nodeStatus},</if>
+            <if test="legend != null">legend = #{legend},</if>
+            <if test="layerSearch != null">layer_search = #{layerSearch},</if>
+            <if test="queryPara != null">query_para = #{queryPara},</if>
+            <if test="childNames != null and childNames != ''">child_names = #{childNames},</if>
+            <if test="dataYear != null">data_year = #{dataYear},</if>
+            <if test="dataVolume != null">data_volume = #{dataVolume},</if>
+            <if test="dataParam != null">data_param = #{dataParam},</if>
+            <if test="parentCode != null">parent_code = #{parentCode},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="dataSource != null">data_source = #{dataSource},</if>
+            <if test="dataSet != null">data_set = #{dataSet},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="bindArea != null">bind_area = #{bindArea},</if>
+            <if test="dataRegion != null">data_region = #{dataRegion},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where resource_id = #{resourceId}
+    </update>
+
+    <update id="updateSysResourceStatus" parameterType="Long">
+        update sys_resource set node_status = #{status} where resource_id = #{resourceId}
+    </update>
+
+    <!--清空历史分配-->
+    <update id="deleteAssignRoles" parameterType="String">
+        update sys_resource set authority_role_id = replace(authority_role_id,#{roleType},'');
+    </update>
+
+    <update id="updateResourceAssignRoles" parameterType="com.ruoyi.project.system.domain.SysResourceRole">
+        update sys_resource set authority_role_id = concat( #{roleType} ,authority_role_id) where resource_id in
+        <foreach item="resourceAutoIds" collection="resourceAutoIds" open="(" separator="," close=")">
+            #{resourceAutoIds}
+        </foreach>
+    </update>
+
+    <delete id="deleteSysResourceById" parameterType="Long">
+        update sys_resource set node_status = 0 where resource_id = #{resourceId}
+    </delete>
+
+    <delete id="deleteSysResourceByIds" parameterType="String">
+        update sys_resource set node_status = 0  where resource_id in
+        <foreach item="resourceId" collection="array" open="(" separator="," close=")">
+            #{resourceId}
+        </foreach>
+    </delete>
+
+</mapper>

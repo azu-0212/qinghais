@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysUnitMapper">
+
+    <resultMap type="SysUnit" id="SysUnitResult">
+        <result property="id"    column="id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remark"    column="remark"    />
+        <result property="serverUrl"    column="server_url"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="nodeStatus"    column="node_status"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="dataType"    column="data_type"    />
+    </resultMap>
+
+    <sql id="selectSysUnitVo">
+        select id, parent_id, create_time, update_date, update_by, remark, server_url, node_name, node_status, node_type, data_type from sys_unit
+    </sql>
+
+    <select id="selectSysUnitList" parameterType="SysUnit" resultMap="SysUnitResult">
+        <include refid="selectSysUnitVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+            <if test="serverUrl != null  and serverUrl != ''"> and server_url = #{serverUrl}</if>
+            <if test="nodeName != null  and nodeName != ''"> and node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="nodeStatus != null "> and node_status = #{nodeStatus}</if>
+            <if test="nodeType != null "> and node_type = #{nodeType}</if>
+            <if test="dataType != null "> and data_type = #{dataType}</if>
+        </where>
+    </select>
+
+    <select id="selectSysUnitById" parameterType="Long" resultMap="SysUnitResult">
+        <include refid="selectSysUnitVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysUnit" parameterType="SysUnit" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_unit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="serverUrl != null">server_url,</if>
+            <if test="nodeName != null">node_name,</if>
+            <if test="nodeStatus != null">node_status,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="dataType != null">data_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="serverUrl != null">#{serverUrl},</if>
+            <if test="nodeName != null">#{nodeName},</if>
+            <if test="nodeStatus != null">#{nodeStatus},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="dataType != null">#{dataType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysUnit" parameterType="SysUnit">
+        update sys_unit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="serverUrl != null">server_url = #{serverUrl},</if>
+            <if test="nodeName != null">node_name = #{nodeName},</if>
+            <if test="nodeStatus != null">node_status = #{nodeStatus},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysUnitById" parameterType="Long">
+        delete from sys_unit where id = #{id}
+    </delete>
+
+    <delete id="deleteSysUnitByIds" parameterType="String">
+        delete from sys_unit where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

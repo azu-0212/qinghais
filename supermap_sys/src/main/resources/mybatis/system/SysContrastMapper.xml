@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SysContrastMapper">
+
+    <resultMap type="SysContrast" id="SysContrastResult">
+        <result property="id"    column="id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="serverUrl"    column="server_url"    />
+        <result property="orderBy"    column="order_by"    />
+        <result property="nodeStatus"    column="node_status"    />
+        <result property="childNames"    column="child_names"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updateDate"    column="update_date"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="bindArea"    column="bind_area"    />
+        <result property="remark"    column="remark"    />
+        <result property="dataYear"    column="data_year"    />
+        <result property="dataVolume"    column="data_volume"    />
+        <result property="dataParam"    column="data_param"    />
+        <result property="position"    column="position"    />
+    </resultMap>
+
+    <sql id="selectSysContrastVo">
+        select id, parent_id, node_name, node_type, data_type, server_url, order_by, node_status, child_names, create_date, update_date, update_by, bind_area, remark, data_year, data_volume, data_param, position from sys_contrast
+    </sql>
+
+    <select id="selectSysContrastList" parameterType="SysContrast" resultMap="SysContrastResult">
+        <include refid="selectSysContrastVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="nodeName != null  and nodeName != ''"> and node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="nodeType != null "> and node_type = #{nodeType}</if>
+            <if test="dataType != null "> and data_type = #{dataType}</if>
+            <if test="serverUrl != null  and serverUrl != ''"> and server_url = #{serverUrl}</if>
+            <if test="orderBy != null "> and order_by = #{orderBy}</if>
+            <if test="nodeStatus != null "> and node_status = #{nodeStatus}</if>
+            <if test="childNames != null  and childNames != ''"> and child_names = #{childNames}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+            <if test="bindArea != null "> and bind_area = #{bindArea}</if>
+            <if test="dataYear != null  and dataYear != ''"> and data_year = #{dataYear}</if>
+            <if test="dataVolume != null  and dataVolume != ''"> and data_volume = #{dataVolume}</if>
+            <if test="dataParam != null  and dataParam != ''"> and data_param = #{dataParam}</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+        </where>
+    </select>
+
+    <select id="selectSysContrastListByType" parameterType="Long" resultMap="SysContrastResult">
+        select id, node_name, server_url, order_by, node_status from sys_contrast where parent_id = #{pid} and data_type = #{dataType}
+    </select>
+
+    <select id="selectSysContrastById" parameterType="Long" resultMap="SysContrastResult">
+        <include refid="selectSysContrastVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysContrast" parameterType="SysContrast" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_contrast
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="nodeName != null">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="dataType != null">data_type,</if>
+            <if test="serverUrl != null">server_url,</if>
+            <if test="orderBy != null">order_by,</if>
+            <if test="nodeStatus != null">node_status,</if>
+            <if test="childNames != null and childNames != ''">child_names,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updateDate != null">update_date,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="bindArea != null">bind_area,</if>
+            <if test="remark != null">remark,</if>
+            <if test="dataYear != null">data_year,</if>
+            <if test="dataVolume != null">data_volume,</if>
+            <if test="dataParam != null">data_param,</if>
+            <if test="position != null">position,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="nodeName != null">#{nodeName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="dataType != null">#{dataType},</if>
+            <if test="serverUrl != null">#{serverUrl},</if>
+            <if test="orderBy != null">#{orderBy},</if>
+            <if test="nodeStatus != null">#{nodeStatus},</if>
+            <if test="childNames != null and childNames != ''">#{childNames},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="bindArea != null">#{bindArea},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="dataYear != null">#{dataYear},</if>
+            <if test="dataVolume != null">#{dataVolume},</if>
+            <if test="dataParam != null">#{dataParam},</if>
+            <if test="position != null">#{position},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysContrast" parameterType="SysContrast">
+        update sys_contrast
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="nodeName != null">node_name = #{nodeName},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
+            <if test="serverUrl != null">server_url = #{serverUrl},</if>
+            <if test="orderBy != null">order_by = #{orderBy},</if>
+            <if test="nodeStatus != null">node_status = #{nodeStatus},</if>
+            <if test="childNames != null and childNames != ''">child_names = #{childNames},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="bindArea != null">bind_area = #{bindArea},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="dataYear != null">data_year = #{dataYear},</if>
+            <if test="dataVolume != null">data_volume = #{dataVolume},</if>
+            <if test="dataParam != null">data_param = #{dataParam},</if>
+            <if test="position != null">position = #{position},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysContrastById" parameterType="Long">
+        delete from sys_contrast where id = #{id}
+    </delete>
+
+    <delete id="deleteSysContrastByIds" parameterType="String">
+        delete from sys_contrast where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
